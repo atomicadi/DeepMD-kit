@@ -2,7 +2,7 @@ import dpdata
 import numpy as np
 data = dpdata.LabeledSystem('OUTCAR', fmt = 'vasp/outcar') 
 print('# the data contains %d frames' % len(data))
-n = int(input("Please, write the number of frames for training: "))
+n = int(input("Please, enter the number of frames for training: "))
 # random choose for training_data
 index_training = np.random.choice(len(data), size=n, replace=False)
 # other indexes are validation_data
