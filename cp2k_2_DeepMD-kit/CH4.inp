@@ -1,0 +1,114 @@
+&FORCE_EVAL
+  METHOD QS
+  &DFT
+    BASIS_SET_FILE_NAME /home/fusion/software/cp2k/data/GTH_BASIS_SETS
+    POTENTIAL_FILE_NAME /home/fusion/software/cp2k/data/POTENTIAL
+    MULTIPLICITY 1
+    CHARGE=0
+    LSD
+    &MGRID
+      CUTOFF 280
+      REL_CUTOFF 40
+   NGRIDS 4
+    &END MGRID
+    &QS
+      WF_INTERPOLATION ASPC
+      EXTRAPOLATION_ORDER 3
+      EPS_DEFAULT 1.0E-10
+      METHOD GPW
+    &END QS
+    &SCF
+      SCF_GUESS RESTART
+      &OT ON
+        MINIMIZER DIIS
+      &END OT
+    # SCF_GUESS    RESTART
+      EPS_SCF      1.0E-4
+
+      &PRINT
+        &RESTART OFF
+        &END
+      &END
+
+    &END SCF
+    &XC
+      &XC_FUNCTIONAL BLYP
+       &END XC_FUNCTIONAL
+        &XC_GRID
+          XC_SMOOTH_RHO NN10
+          XC_DERIV SPLINE2_SMOOTH
+      &END XC_GRID
+    &END XC
+  &END DFT
+  &SUBSYS
+    &CELL
+      ABC 35.0 35.0 35.0
+    &END CELL
+  # 256 H2O (TIP5P,1bar,300K) a = 19.7340
+    &TOPOLOGY
+      COORD_FILE_NAME CH4.xyz
+      COORDINATE xyz    
+    &END TOPOLOGY
+     &KIND H
+      BASIS_SET TZVP-GTH
+      POTENTIAL GTH-BLYP-q1
+    &END KIND
+    &KIND C
+      BASIS_SET TZVP-GTH
+      POTENTIAL GTH-BLYP-q6
+    &END KIND
+  &END SUBSYS
+&END FORCE_EVAL
+&GLOBAL
+  PROJECT CH4
+  RUN_TYPE MD
+  PRINT_LEVEL HIGH
+
+  &TIMINGS
+     THRESHOLD 0.000001
+  &END
+
+&END GLOBAL
+&MOTION
+   &MD
+    ENSEMBLE NVT
+    STEPS 50
+    TIMESTEP 0.5
+    TEMPERATURE 300
+    &THERMOSTAT
+      REGION MOLECULE
+      &NOSE
+        LENGTH 3
+        YOSHIDA 3
+        TIMECON 1000
+        MTS 2
+      &END NOSE
+    &END
+    &PRINT
+     &ENERGY
+      &EACH
+       MD 1
+      &END EACH
+     &END ENERGY
+    &END PRINT
+   &END MD
+  &PRINT
+   &CELL
+    &EACH
+     MD 1
+    &END EACH
+   &END CELL
+  &END PRINT
+  &PRINT
+   &FORCES ON
+    &EACH
+     MD 1
+    &END EACH
+   &END FORCES
+   &TRAJECTORY
+     &EACH
+      MD 1
+     &END EACH
+   &END TRAJECTORY
+  &END PRINT
+&END MOTION
